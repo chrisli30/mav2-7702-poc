@@ -1,0 +1,13 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+test = "test"
+solc = "0.8.29"
+# EIP-7702 (type-4 / delegation) requires the Prague (Pectra) EVM.
+evm_version = "prague"
+optimizer = true
+optimizer_runs = 200
+
+[rpc_endpoints]
+sepolia = "${SEPOLIA_RPC_URL}"

@@ -1,0 +1,9 @@
+# Never commit. Holds SEPOLIA_RPC_URL, which carries a provider API key.
+.env
+.env.*
+!.env.example
+
+out/
+cache/
+broadcast/
+docs/

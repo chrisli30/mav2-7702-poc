@@ -95,12 +95,18 @@ build pins `evm_version = cancun`; EIP-7702 needs Prague.
 
 ## Not covered
 
-The tests establish what the **contracts** enforce. They do not establish what Alchemy's *managed*
-session-key API actually requests: its eight documented permission types (`native-token-transfer`,
-`erc20-token-transfer`, `gas-limit`, `contract-access`, `account-functions`,
-`functions-on-all-contracts`, `functions-on-contract`, `root`) are all execution-scoped, and none
-mentions signing — so `isSignatureValidation` is not exposed as a permission there. Whether the
-managed path leaves it unset is unverified.
+The tests establish what the **contracts** enforce, on the paths exercised here.
+
+What Alchemy's *managed* session-key API requests is settled separately, by reading aa-sdk rather
+than by test: `PermissionBuilder` (`packages/smart-accounts/src/ma-v2/permissionBuilder.ts`) contains
+exactly two occurrences of `isSignatureValidation`, both hardcoded `false`, and no branch mutates it.
+`PermissionType.ROOT` sets `isGlobal = true` and nothing else — so even a root-scoped session key can
+execute anything yet still cannot sign as the account. That is why the eight documented permission
+types (`native-token-transfer`, `erc20-token-transfer`, `gas-limit`, `contract-access`,
+`account-functions`, `functions-on-all-contracts`, `functions-on-contract`, `root`) are all
+execution-scoped: execution and signing are separate axes, and the managed API only exposes the
+first. The flag is reachable only via the low-level `installValidation` decorator, where the caller
+supplies it explicitly.
 
 Also untested here: the permission modules themselves (AllowlistModule, TimeRangeModule,
 NativeTokenLimitModule) and per-operation gas cost. Note that a validation carrying hooks cannot
